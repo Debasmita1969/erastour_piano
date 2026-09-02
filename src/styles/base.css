@@ -1,0 +1,75 @@
+/* ── Hand-Painted Piano ────────────────────────────────────────────────
+   A hand-painted walnut folk instrument in a dim room, lit by a warm
+   practice lamp from the left and a cool window fill from the right.
+   Built as real CSS 3D geometry — every key is a box with a top face
+   and a front face, hinged at its back edge. Committed single world:
+   the room is dark by design, so no theme swap. ─────────────────── */
+
+:root{
+  /* room */
+  --void:#0C0906;
+  --void-2:#181209;
+  /* walnut */
+  --wood-deep:#2A1810;
+  --wood:#3E2517;
+  --wood-lit:#6B4226;
+  --wood-edge:#18100B;
+  /* keys */
+  --ivory:#F2EBDF;
+  --ebony:#14100C;
+  /* lamps: one warm practice light left, cool window fill right */
+  --lamp:#FFE0AE;
+  --fill:#BFC9CE;
+  --brass:#D9A441;
+  --brass-dim:#8A6524;
+  /* The interface accent. Amber on amber left the whole screen one
+     colour; celadon is the complement of the lamp, and it is already
+     the leaf green in the painting, so it reads as belonging. */
+  --accent:#46D6A2;
+  --accent-dim:#1B7A5A;
+  --ui:"Karla","Avenir Next",system-ui,sans-serif;
+
+  /* geometry (px, before scale) */
+  --wk-w:56px;
+  --wk-d:246px;
+  --wk-h:19px;
+  --bk-w:34px;
+  --bk-d:154px;
+  --bk-h:31px;
+  --rail:88px;
+  --board:136px;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+/* mobile browsers count the URL bar in 100vh, so the bottom of the
+   page hides under it — dvh tracks what is actually visible */
+@supports (height:100dvh){ html,body{height:100dvh} }
+body{
+  margin:0;
+  background:var(--void);
+  color:#E8DECB;
+  font-family:var(--ui);
+  overflow:hidden;
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* ── The room ─────────────────────────────────────────────────── */
+#room{
+  position:fixed;inset:0;
+  background:
+    radial-gradient(56vw 50vh at 14% 14%, rgba(255,206,140,.22), transparent 66%),
+    radial-gradient(52vw 48vh at 88% 30%, rgba(150,172,186,.13), transparent 68%),
+    radial-gradient(90vw 70vh at 50% 118%, rgba(96,64,34,.18), transparent 70%),
+    linear-gradient(#181209 0%, #0C0906 55%, #070503 100%);
+}
+#room::after{
+  content:"";position:absolute;inset:0;
+  background:radial-gradient(120% 100% at 50% 45%, transparent 45%, rgba(0,0,0,.72) 100%);
+  pointer-events:none;
+}
+/* film grain keeps the flat gradients from banding */
+#grain{
+  position:fixed;inset:0;pointer-events:none;opacity:.16;mix-blend-mode:overlay;
+  image-rendering:pixelated;
+}

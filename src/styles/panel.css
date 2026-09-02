@@ -1,0 +1,210 @@
+/* ── Control bar ──────────────────────────────────────────────── */
+/* Quiet by design. The instrument is the only thing on screen with
+   texture; the controls read as a caption strip under it, not as a
+   piece of app furniture competing for attention. */
+#panel{
+  position:fixed;left:0;right:0;bottom:16px;
+  width:fit-content;margin:0 auto;
+  z-index:20;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;
+  padding:7px 12px;
+  max-width:96vw;
+  background:rgba(14,9,5,.62);
+  border:1px solid rgba(232,204,158,.10);
+  border-radius:11px;
+  box-shadow:0 10px 30px rgba(0,0,0,.45);
+  backdrop-filter:blur(12px);
+}
+.grp{display:flex;align-items:center;gap:6px}
+.cap{display:none}
+#section{
+  display:inline;font-size:9px;font-weight:700;
+  letter-spacing:.2em;text-indent:.2em;text-transform:uppercase;
+  color:rgba(70,214,162,.85);white-space:nowrap;
+}
+.seg{display:flex;gap:1px}
+.seg button{
+  font:500 11.5px/1 var(--ui);
+  color:rgba(232,222,206,.55);
+  background:transparent;border:0;border-radius:6px;
+  padding:6px 9px;cursor:pointer;
+  border-bottom:1.5px solid transparent;
+  transition:color .18s,border-color .18s;
+}
+.seg button:hover{color:#F6EEDF}
+.seg button[aria-pressed="true"]{
+  color:#D8FFEF;
+  border-bottom-color:var(--accent);
+}
+.stepper{display:flex;align-items:center;gap:4px}
+.stepper button{
+  width:23px;height:23px;border-radius:8px;cursor:pointer;
+  background:rgba(0,0,0,.42);border:1px solid rgba(232,204,158,.14);
+  color:rgba(232,222,206,.8);font:600 13px/1 var(--ui);
+}
+.stepper button:hover{background:rgba(70,214,162,.22);color:#fff}
+/* the octave is pinned while a lesson is running */
+.stepper button[disabled],.stepper button[disabled]:hover{
+  opacity:.32;cursor:default;background:rgba(0,0,0,.42);color:rgba(232,222,206,.8);
+}
+.stepper span{
+  min-width:26px;text-align:center;font:600 12px/1 var(--ui);
+  font-variant-numeric:tabular-nums;color:#F2E8D6;
+}
+input[type=range]{
+  appearance:none;width:84px;height:20px;background:transparent;cursor:pointer;margin:0;
+}
+input[type=range]::-webkit-slider-runnable-track{
+  height:4px;border-radius:2px;
+  background:linear-gradient(90deg, var(--accent-dim), var(--accent));
+}
+input[type=range]::-webkit-slider-thumb{
+  appearance:none;width:14px;height:14px;margin-top:-5px;border-radius:50%;
+  background:#E8FFF6;box-shadow:0 0 9px rgba(70,214,162,.5), 0 2px 4px rgba(0,0,0,.6);
+}
+input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:linear-gradient(90deg,var(--accent-dim),var(--accent))}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border:0;border-radius:50%;background:#E8FFF6;box-shadow:0 0 9px rgba(70,214,162,.5)}
+
+.toggle{
+  display:flex;align-items:center;gap:7px;cursor:pointer;
+  font:500 11.5px/1 var(--ui);color:rgba(232,222,206,.6);
+}
+.toggle input{
+  appearance:none;width:28px;height:16px;margin:0;border-radius:10px;cursor:pointer;
+  background:rgba(0,0,0,.5);border:1px solid rgba(232,204,158,.16);
+  position:relative;transition:background .2s;
+}
+.toggle input::after{
+  content:"";position:absolute;top:2px;left:2px;width:10px;height:10px;border-radius:50%;
+  background:rgba(232,222,206,.55);transition:transform .2s,background .2s;
+}
+.toggle input:checked{background:linear-gradient(90deg, rgba(27,122,90,.8), rgba(70,214,162,.6))}
+.toggle input:checked::after{transform:translateX(12px);background:#FBF3E2}
+.toggle input:checked + span{color:#F6EEDF}
+
+.btn{
+  font:500 12px/1 var(--ui);color:rgba(232,222,206,.78);
+  background:rgba(0,0,0,.42);border:1px solid rgba(232,204,158,.14);
+  border-radius:8px;padding:7px 12px;cursor:pointer;white-space:nowrap;
+  transition:background .18s,color .18s;
+}
+.btn:hover{background:rgba(70,214,162,.22);color:#E4FFF4}
+.btn[disabled]{opacity:.42;cursor:default;background:rgba(0,0,0,.42);color:rgba(232,222,206,.78)}
+
+button:focus-visible,input:focus-visible,.toggle input:focus-visible{
+  outline:2px solid var(--accent);outline-offset:3px;
+}
+
+/* ── Lesson strip ─────────────────────────────────────────────── */
+#lesson{
+  position:fixed;left:0;right:0;top:18px;
+  width:fit-content;margin:0 auto;
+  z-index:21;display:none;align-items:center;gap:14px;
+  padding:10px 14px;max-width:min(940px,94vw);
+  background:linear-gradient(180deg, rgba(34,25,15,.86), rgba(16,11,6,.9));
+  border:1px solid rgba(232,204,158,.16);
+  border-radius:14px;
+  box-shadow:0 18px 44px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.07);
+  backdrop-filter:blur(14px);
+}
+#lesson.on{display:flex}
+#chips{display:flex;align-items:stretch;gap:6px;overflow:hidden}
+.chip{
+  flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  padding:7px 0;border-radius:8px;
+  background:rgba(0,0,0,.34);border:1px solid rgba(232,204,158,.12);
+  color:rgba(232,222,206,.62);
+  transition:opacity .2s,background .2s,color .2s;
+}
+.chip b{font:700 13px/1 var(--ui);letter-spacing:.06em}
+.chip small{font:600 9px/1 var(--ui);letter-spacing:.1em;opacity:.62;font-variant-numeric:tabular-nums}
+.chip.now{
+  background:linear-gradient(180deg, rgba(70,214,162,.42), rgba(27,122,90,.34));
+  border-color:rgba(255,214,130,.5);color:#E4FFF4;
+  box-shadow:0 0 16px rgba(70,214,162,.28);
+}
+.chip.done{opacity:.3}
+/* Listen plays the phrase for you, so the chips stop asking for
+   input and read as inactive until it finishes. */
+#chips.listening{opacity:.4;filter:saturate(.35)}
+#chips.listening .chip.now{
+  background:rgba(0,0,0,.34);
+  border-color:rgba(232,204,158,.12);
+  color:rgba(232,222,206,.62);
+  box-shadow:none;
+}
+#chips,#chips.listening{transition:opacity .25s,filter .25s}
+
+#prog{
+  font:600 12px/1 var(--ui);font-variant-numeric:tabular-nums;
+  color:rgba(232,222,206,.55);white-space:nowrap;
+}
+#lessonMsg{font:500 13px/1.4 var(--ui);color:#F6EEDF;white-space:nowrap}
+.lesson-btns{display:flex;gap:6px}
+
+#hint{
+  position:fixed;left:0;right:0;bottom:58px;text-align:center;z-index:19;
+  font-size:10.5px;letter-spacing:.06em;color:rgba(232,222,206,.30);
+  pointer-events:none;
+}
+#hint b{color:rgba(70,214,162,.72);font-weight:700}
+/* Compact chrome on phones — and on any short viewport, which is
+   what a landscape phone is: wide enough to look like a desktop but
+   only ~400px tall. The controls become one row you swipe through
+   rather than wrapping into three and eating the keyboard. */
+@media (max-width:720px), (max-height:560px){
+  #panel{
+    left:8px;right:8px;bottom:8px;
+    width:auto;margin:0;max-width:none;
+    gap:12px;padding:8px 10px;
+    flex-wrap:nowrap;justify-content:flex-start;
+    overflow-x:auto;overscroll-behavior-x:contain;
+    scrollbar-width:none;
+  }
+  #panel::-webkit-scrollbar{display:none}
+  .grp{flex:none}
+  .cap{display:none}
+  .seg button{padding:8px 11px}
+  input[type=range]{width:88px}
+
+  #lesson{
+    left:8px;right:8px;top:8px;
+    width:auto;margin:0;max-width:none;
+    gap:9px;padding:7px 9px;
+  }
+  #chips{overflow-x:auto;scrollbar-width:none}
+  #chips::-webkit-scrollbar{display:none}
+  /* Listen plays the phrase for you, so the chips stop asking for
+   input and read as inactive until it finishes. */
+#chips.listening{opacity:.4;filter:saturate(.35)}
+#chips.listening .chip.now{
+  background:rgba(0,0,0,.34);
+  border-color:rgba(232,204,158,.12);
+  color:rgba(232,222,206,.62);
+  box-shadow:none;
+}
+#chips,#chips.listening{transition:opacity .25s,filter .25s}
+
+#prog{font-size:11px}
+  .lesson-btns .btn{padding:7px 10px}
+}
+
+/* the piano is wide by nature, so portrait phones get a nudge.
+   The control bar sits at the bottom on mobile, so the hint moves
+   above it instead of hiding underneath. */
+@media (max-width:720px){
+  #hint .wide{display:none}
+  #hint{bottom:66px;padding:0 12px}
+}
+@media (min-width:721px){ #hint .narrow{display:none} }
+@media (max-height:560px){
+  #hint{display:none}
+  #lesson{top:6px;padding:5px 8px}
+  #panel{bottom:6px;padding:6px 10px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  #rig,.key,.chip{transition:none}
+  .key.target .top::after{animation:none;filter:brightness(1.3)}
+  .key.miss .top::after{animation:none;opacity:1}
+}
